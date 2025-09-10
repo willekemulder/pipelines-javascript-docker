@@ -1,15 +1,20 @@
-# syntax=docker/dockerfile:1
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
 
-FROM node:12.18.1
-ENV NODE_ENV=production
-
+# Set the working directory to /app
 WORKDIR /app
 
-COPY ["package.json", "package-lock.json*", "./"]
+# # add an URL that PIP automatically searches (e.g., Azure Artifact Store URL)
+# ARG INDEX_URL
+# ENV PIP_EXTRA_INDEX_URL=$INDEX_URL
 
-RUN npm install --production
+# Install system dependencies (e.g., ffmpeg)
+RUN apt-get update && apt-get install -y ffmpeg
+RUN pip install takkie==0.1.377553
 
-COPY . .
+# Copy requirements.txt and install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-EXPOSE 8080
-CMD [ "node", "server.js" ]
+# Copy the current directory contents into the container at /app
+COPY . /app
