@@ -6,7 +6,7 @@ pool:
 
 variables:
   imageName: 'takkie-animation-env-python-docker'
-  dockerfilePath: 'app/Dockerfile'
+  dockerfilePath: 'Dockerfile'
 
 steps:
 - task: Docker@2
