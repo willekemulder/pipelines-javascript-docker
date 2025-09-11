@@ -5,8 +5,8 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # # add an URL that PIP automatically searches (e.g., Azure Artifact Store URL)
-# ARG INDEX_URL
-# ENV PIP_EXTRA_INDEX_URL=$INDEX_URL
+ARG INDEX_URL
+ENV PIP_EXTRA_INDEX_URL=$INDEX_URL
 
 # Copy requirements.txt and install Python dependencies
 COPY requirements.txt .
