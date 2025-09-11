@@ -15,8 +15,6 @@ RUN pip install -r requirements.txt
 # Install system dependencies (e.g., ffmpeg)
 RUN apt-get update && apt-get install -y ffmpeg
 
-[global]
-index-url=https://pkgs.dev.azure.com/ProRail/_packaging/ConditieAI/pypi/simple/
 RUN python -m pip install --upgrade pip
 RUN pip install keyring artifacts-keyring
 RUN pip install takkie==0.1.377553
