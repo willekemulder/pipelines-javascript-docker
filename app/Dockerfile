@@ -8,13 +8,18 @@ WORKDIR /app
 # ARG INDEX_URL
 # ENV PIP_EXTRA_INDEX_URL=$INDEX_URL
 
-# Install system dependencies (e.g., ffmpeg)
-RUN apt-get update && apt-get install -y ffmpeg
-RUN pip install takkie==0.1.377553
-
 # Copy requirements.txt and install Python dependencies
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+# Install system dependencies (e.g., ffmpeg)
+RUN apt-get update && apt-get install -y ffmpeg
+
+[global]
+index-url=https://pkgs.dev.azure.com/ProRail/_packaging/ConditieAI/pypi/simple/
+RUN python -m pip install --upgrade pip
+RUN pip install keyring artifacts-keyring
+RUN pip install takkie==0.1.377553
 
 # Copy the current directory contents into the container at /app
 COPY . /app
