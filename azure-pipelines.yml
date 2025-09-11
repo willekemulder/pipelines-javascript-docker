@@ -8,8 +8,13 @@ variables:
   imageName: 'takkie-animation-env-python-docker'
   dockerfilePath: 'app/Dockerfile'
   pip_index_url: 'https://pkgs.dev.azure.com/ProRail/_packaging/ConditieAI/pypi/simple/'
+  artifact_name: 'ConditieAI'
 
 steps:
+- task: PipAuthenticate@1
+  inputs:
+    artifactFeeds: $(artifact_name)
+
 - task: Docker@2
   displayName: Build Docker image
   inputs:
