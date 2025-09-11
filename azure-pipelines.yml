@@ -6,44 +6,18 @@ pool:
 
 variables:
   imageName: 'takkie-animation-env-python-docker'
-  artifactFeed: 'ConditieAI'                               # the name of an Azure artifacts feed
-  azureSubscription: 'A&B-AMInformatie-NonProduction-01'   # the name of an Azure Resource Manager Service Connection
-  azureContainerRegistry: 'SIAGTakkieDevCR'                # the name of an Azure Container Registry
   dockerfilePath: 'app/Dockerfile'
+  pip_index_url: 'https://pkgs.dev.azure.com/ProRail/_packaging/ConditieAI/pypi/simple/'
 
 steps:
-- task: AzureCLI@1
-  displayName: Login to ACR
+- task: Docker@2
+  displayName: Build Docker image
   inputs:
-    azureSubscription: $(azureSubscription)
-    scriptLocation: inlineScript
-    inlineScript: |
-      az acr login -n $(azureContainerRegistry)
-
-# This task populates the PIP_EXTRA_INDEX_URL environment variable
-# https://github.com/microsoft/azure-pipelines-tasks/blob/7eab2bc96011927a971f2613ce6e85d93ee9b3f1/Tasks/PipAuthenticateV0/pipauthenticatemain.ts#L60
-- task: PipAuthenticate@0
-  displayName: Authenticate with artifact feed
-  inputs:
-    artifactFeeds: $(artifactFeed)
-
-# Docker build w/ a build arg to pass PIP_EXTRA_INDEX_URL into the build phase
-- bash: |
-    docker build \
-      --build-arg 'INDEX_URL=$(PIP_EXTRA_INDEX_URL)' \
-      -t $(azureContainerRegistry).azurecr.io/$(imageName):$(Build.BuildNumber) \
-      -t $(azureContainerRegistry).azurecr.io/$(imageName):latest \
-      .
-    docker push $(azureContainerRegistry).azurecr.io/$(imageName):$(Build.BuildNumber)
-    docker push $(azureContainerRegistry).azurecr.io/$(imageName):latest
-  displayName: Build and push container
-
-# - task: Docker@2
-#   displayName: Build Docker image
-#   inputs:
-#     repository: $(imageName)
-#     command: build
-#     Dockerfile: $(dockerfilePath)
-#     tags: |
-#       latest
-#       $(Build.BuildId)
+    repository: $(imageName)
+    command: build
+    Dockerfile: $(dockerfilePath)
+    tags: |
+      latest
+      $(Build.BuildId)
+    arguments: |
+      --build-arg INDEX_URL=$(pip_index_url)
